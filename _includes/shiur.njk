@@ -1,0 +1,12 @@
+---
+layout: base.njk
+---
+<article class="wrap-narrow" style="padding:var(--space-8) 0">
+  <a href="/shiurim/" class="text-muted" style="font-size:14px">&larr; Back to all shiurim</a>
+  {% if topic %}<div style="margin-top:var(--space-3)"><span class="tag">{{ topic }}</span></div>{% endif %}
+  <h1 style="margin-top:var(--space-2)">{{ title }}</h1>
+  <p class="text-muted" style="margin-bottom:var(--space-4)">{{ date }}</p>
+  {% if audio %}<audio controls src="{{ audio }}" style="width:100%;margin-bottom:var(--space-4)"></audio>{% endif %}
+  {% if audio_upload %}<audio controls src="{{ audio_upload }}" style="width:100%;margin-bottom:var(--space-4)"></audio>{% endif %}
+  <div class="article-body" style="font-size:17px;text-align:justify">{{ content | safe }}</div>
+</article>
