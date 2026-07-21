@@ -1,0 +1,47 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "content/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "articles"
+    label: "Articles"
+    folder: "content/articles"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - label: "Topic"
+        name: "topic"
+        widget: "select"
+        options: ["Chumash", "Tefillah", "Chagim", "Halacha", "Hashkafah/Machshavah", "Gemara/Talmud", "Miscellaneous"]
+      - { label: "PDF Attachment (optional)", name: "pdf", widget: "file", required: false }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  - name: "shiurim"
+    label: "Shiurim"
+    folder: "content/shiurim"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - label: "Topic"
+        name: "topic"
+        widget: "select"
+        options: ["Chumash", "Tefillah", "Chagim", "Halacha", "Hashkafah/Machshavah", "Gemara/Talmud", "Miscellaneous"]
+      - { label: "Audio File Link", name: "audio", widget: "string", hint: "Paste a direct link to the audio file (mp3), or upload one below", required: false }
+      - { label: "Upload Audio", name: "audio_upload", widget: "file", required: false }
+      - { label: "Notes", name: "body", widget: "markdown", required: false }
+
+  - name: "pages"
+    label: "Site Pages"
+    files:
+      - label: "Bio / About"
+        name: "bio"
+        file: "content/bio.md"
+        fields:
+          - { label: "Bio Text", name: "body", widget: "markdown" }

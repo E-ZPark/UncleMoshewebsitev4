@@ -1,0 +1,25 @@
+---
+layout: base.njk
+pagination:
+  data: topicList
+  size: 1
+  alias: topic
+permalink: "/topics/{{ topic.slug }}/index.html"
+eleventyComputed:
+  title: "{{ topic.name }}"
+---
+<section class="wrap" style="padding:var(--space-8) 0">
+  <h6>Topic</h6>
+  <h1 style="margin-bottom:var(--space-4)">{{ topic.name }}</h1>
+  <div class="card-grid">
+    {% for article in collections.articles %}
+    {% if article.data.topic == topic.name %}
+    <a href="{{ article.url }}" class="card">
+      <span class="tag">{{ article.data.topic }}</span>
+      <span class="card-title">{{ article.data.title }}</span>
+      <span class="card-meta">{{ article.data.date }}</span>
+    </a>
+    {% endif %}
+    {% endfor %}
+  </div>
+</section>

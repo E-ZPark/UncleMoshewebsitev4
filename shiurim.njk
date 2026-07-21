@@ -1,0 +1,21 @@
+---
+layout: base.njk
+title: Shiurim
+permalink: /shiurim/index.html
+---
+<section class="wrap" style="padding:var(--space-8) 0">
+  <h6>Listen</h6>
+  <h1 style="margin-bottom:var(--space-6)">Shiurim</h1>
+  <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+    {% for shiur in collections.shiurim %}
+    <div class="shiur-row">
+      <div>
+        {% if shiur.data.topic %}<span class="tag" style="margin-bottom:4px;display:inline-flex">{{ shiur.data.topic }}</span><br>{% endif %}
+        <span class="card-title">{{ shiur.data.title }}</span><br>
+        <span class="card-meta">{{ shiur.data.date }}</span>
+      </div>
+      {% if shiur.data.audio %}<audio controls src="{{ shiur.data.audio }}"></audio>{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>

@@ -1,0 +1,30 @@
+---
+layout: base.njk
+title: All Articles
+permalink: /articles/index.html
+---
+<section class="wrap" style="padding:var(--space-8) 0">
+  <h6>Library</h6>
+  <h1 style="margin-bottom:var(--space-4)">All Articles</h1>
+  <div class="field" style="max-width:360px;margin-bottom:var(--space-6)">
+    <label for="search-box">Search by title</label>
+    <input id="search-box" class="input" type="text" placeholder="e.g. Shabbat, Prayer, Bereishit...">
+  </div>
+  <div class="card-grid" id="article-list">
+    {% for article in collections.articles %}
+    <a href="{{ article.url }}" class="card" data-title="{{ article.data.title | lower }}">
+      {% if article.data.topic %}<span class="tag">{{ article.data.topic }}</span>{% endif %}
+      <span class="card-title">{{ article.data.title }}</span>
+      <span class="card-meta">{{ article.data.date }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+<script>
+  document.getElementById('search-box').addEventListener('input', function (e) {
+    var q = e.target.value.toLowerCase();
+    document.querySelectorAll('#article-list .card').forEach(function (el) {
+      el.style.display = el.getAttribute('data-title').includes(q) ? '' : 'none';
+    });
+  });
+</script>

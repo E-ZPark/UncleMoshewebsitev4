@@ -1,0 +1,26 @@
+---
+layout: base.njk
+title: Contact
+permalink: /contact/index.html
+---
+<section class="wrap-narrow" style="padding:var(--space-8) 0">
+  <h6>Contact</h6>
+  <h1 style="margin-bottom:var(--space-4)">Get in Touch</h1>
+  <p class="text-muted" style="margin-bottom:var(--space-6)">Questions, feedback, or requests for a topic to be covered &mdash; write in below.</p>
+  <form name="contact" method="POST" data-netlify="true" style="display:flex;flex-direction:column;gap:var(--space-4)">
+    <input type="hidden" name="form-name" value="contact">
+    <div class="field">
+      <label for="name">Name</label>
+      <input id="name" class="input" type="text" name="name" required>
+    </div>
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" class="input" type="email" name="email" required>
+    </div>
+    <div class="field">
+      <label for="message">Message</label>
+      <textarea id="message" class="input" name="message" rows="6" required></textarea>
+    </div>
+    <button type="submit" class="btn" style="width:100%">Send Message</button>
+  </form>
+</section>

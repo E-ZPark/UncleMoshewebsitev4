@@ -1,0 +1,65 @@
+---
+layout: base.njk
+title: Rabbi Moshe Berger
+---
+<section class="wrap-narrow" style="padding:var(--space-8) 0 var(--space-6);text-align:center">
+  <h1 class="heb" style="color:var(--color-accent-700)">תורה צוה לנו משה מורשה קהלת יעקב</h1>
+  <p style="font-size:17px;opacity:0.85;margin-bottom:var(--space-6)">
+    A growing library of articles and recorded shiurim on Chumash, Gemara, Halacha, and Jewish thought.
+  </p>
+  <div class="field" style="max-width:420px;margin:0 auto;text-align:left">
+    <label for="home-search">Search articles by title</label>
+    <input id="home-search" class="input" type="text" placeholder="e.g. Shabbat, Prayer, Bereishit...">
+  </div>
+</section>
+
+<hr class="hr wrap">
+
+<section class="wrap" style="padding:var(--space-6) 0">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--space-4)">
+    <h2>Recent Articles</h2>
+    <a href="/articles/" class="text-muted" style="font-size:14px">View all &rarr;</a>
+  </div>
+  <div class="card-grid">
+    {% for article in collections.articles %}
+    {% if loop.index <= 3 %}
+    <a href="{{ article.url }}" class="card">
+      {% if article.data.topic %}<span class="tag">{{ article.data.topic }}</span>{% endif %}
+      <span class="card-title">{{ article.data.title }}</span>
+      <span class="card-meta">{{ article.data.date }}</span>
+    </a>
+    {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+<hr class="hr wrap">
+
+<section class="wrap" style="padding:var(--space-6) 0 var(--space-8)">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--space-4)">
+    <h2>Recent Shiurim</h2>
+    <a href="/shiurim/" class="text-muted" style="font-size:14px">View all &rarr;</a>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+    {% for shiur in collections.shiurim %}
+    {% if loop.index <= 3 %}
+    <div class="shiur-row">
+      <div>
+        {% if shiur.data.topic %}<span class="tag" style="margin-bottom:4px;display:inline-flex">{{ shiur.data.topic }}</span><br>{% endif %}
+        <span class="card-title" style="font-size:16px">{{ shiur.data.title }}</span><br>
+        <span class="card-meta">{{ shiur.data.date }}</span>
+      </div>
+      {% if shiur.data.audio %}<audio controls src="{{ shiur.data.audio }}"></audio>{% endif %}
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+<hr class="hr wrap">
+
+<section class="wrap-narrow" style="padding:var(--space-6) 0 var(--space-8)">
+  <h6>Biography</h6>
+  <h2 style="margin-bottom:var(--space-4)">About Rabbi Berger</h2>
+  <div class="bio-body" style="font-size:17px">{{ bio.body | safe }}</div>
+</section>
