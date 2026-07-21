@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+  <link rel="stylesheet" href="./styles.css">
+  <style>
+    html { scroll-behavior: smooth; }
+    body { text-wrap: pretty; }
+    .heb { font-family: "Frank Ruhl Libre", "Noto Serif Hebrew", serif; direction: rtl; unicode-bidi: isolate; }
+    @import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&display=swap');
+    .navlink { background:transparent;border:none;cursor:pointer;font:inherit;color:inherit;padding:6px 10px;border-radius:var(--radius-md);font-size:13px;white-space:nowrap; }
+    .navlink:hover, .navlink[data-active="true"] { color:var(--color-accent-700);background:color-mix(in srgb, var(--color-accent) 10%, transparent); }
+  </style>
+</helmet>
+
+<div style="background:var(--color-bg);color:var(--color-text);min-height:100vh;display:flex;flex-direction:column">
+
+  <header style="border-bottom:1px solid var(--color-divider);position:sticky;top:0;background:var(--color-bg);z-index:10">
+    <div style="max-width:1100px;margin:0 auto;padding:var(--space-1) var(--space-4) 0;text-align:right">
+      <span class="heb" style="font-size:11px;color:var(--color-accent-700)">בס״ד</span>
+    </div>
+    <div style="max-width:1100px;margin:0 auto;padding:var(--space-2) var(--space-4) var(--space-3);display:flex;flex-direction:column;gap:var(--space-2)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-2)">
+        <button class="navlink" onClick="{{ goHome }}" style="font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:19px;padding:0">Rabbi Moshe Berger</button>
+        <span class="heb" style="font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:19px">הרב משה ברגר</span>
+      </div>
+      <nav style="display:flex;flex-wrap:wrap;gap:4px;row-gap:4px">
+        <button class="navlink" data-active="{{ isHome }}" onClick="{{ goHome }}">Home</button>
+        
+        <sc-for list="{{ topics }}" as="t" hint-placeholder-count="7">
+          <button class="navlink" data-active="{{ t.active }}" onClick="{{ t.go }}">{{ t.label }}</button>
+        </sc-for>
+        <button class="navlink" data-active="{{ isShiurim }}" onClick="{{ goShiurim }}">Shiurim</button>
+        <button class="navlink" data-active="{{ isArticles }}" onClick="{{ goArticles }}">All Articles</button><button class="navlink" data-active="{{ isContact }}" onClick="{{ goContact }}">Contact</button>
+      </nav>
+    </div>
+  </header>
+
+  <main style="flex:1">
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <section style="max-width:760px;margin:0 auto;padding:var(--space-8) var(--space-4) var(--space-6);text-align:center">
+      
+      <h1 style="margin-bottom: var(--space-4); color: var(--color-neutral-500)">&nbsp;"תורה צוה לנו משה מורשה קהלת יעקב"</h1><p style="font-size:17px;color:color-mix(in srgb, var(--color-text) 85%, transparent);margin-bottom:var(--space-6)">
+        A growing library of articles and recorded shiurim on Chumash, Gemara, Halachah and Jewish thought.
+      </p>
+      <div class="field" style="max-width:420px;margin:0 auto;text-align:left">
+        <label for="home-search">Search articles by title</label>
+        <input id="home-search" class="input" type="text" placeholder="e.g. Prophecy, Shabbat, Midrash…" value="{{ query }}" onChange="{{ onHomeSearch }}">
+      </div>
+    </section>
+
+    <hr class="hr" style="max-width:1100px;margin:0 auto">
+
+    <section style="max-width:1100px;margin:0 auto;padding:var(--space-6) var(--space-4)">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--space-4)">
+        <h2>Recent Articles</h2>
+        <button class="btn btn-ghost" onClick="{{ goArticles }}">View all →</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:var(--space-4)">
+        <sc-for list="{{ recentArticles }}" as="a" hint-placeholder-count="3">
+          <button onClick="{{ a.go }}" class="card elev-sm" style="text-align:left;cursor:pointer">
+            <span class="tag tag-accent" style="align-self:flex-start">{{ a.topicLabel }}</span>
+            <span class="card-title">{{ a.title }}</span>
+            <span class="card-body">{{ a.excerpt }}</span>
+            <span class="card-meta">{{ a.date }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </section>
+
+    <hr class="hr" style="max-width:1100px;margin:0 auto">
+
+    <section style="max-width:1100px;margin:0 auto;padding:var(--space-6) var(--space-4) var(--space-8)">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:var(--space-4)">
+        <h2>Recent Shiurim</h2>
+        <button class="btn btn-ghost" onClick="{{ goShiurim }}">View all →</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <sc-for list="{{ recentShiurim }}" as="s" hint-placeholder-count="3">
+          <div class="card" style="flex-direction:row;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-4)">
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <span class="tag tag-accent" style="align-self:flex-start">{{ s.topicLabel }}</span>
+              <span class="card-title" style="font-size:17px">{{ s.title }}</span>
+              <span class="card-meta">{{ s.date }}</span>
+            </div>
+            <span class="tag tag-outline" style="flex:none">▶ Audio placeholder</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <hr class="hr" style="max-width:1100px;margin:0 auto">
+
+    <section style="max-width:900px;margin:0 auto;padding:var(--space-6) var(--space-4) var(--space-8)">
+      <h6 style="color:var(--color-accent-700)">Biography</h6>
+      <h2 style="margin-bottom:var(--space-4)">A Life in Torah and Scholarship</h2>
+      <p style="text-align:justify;font-size:17px">
+        Rabbi Moshe Berger has been Professor of Bible and Rabbinic Literature for thirty years at the various incarnations of The Cleveland College of Jewish Studies (Siegal College) in Beachwood, Ohio. He served as Orthodox Hillel Rabbi at Brandeis, Harvard–Radcliffe and Case Western Reserve Universities. In addition, he served for ten years as Rabbi of Sinai Synagogue and is presently the Rabbi of the Torat Tzion Kollel Minyan in Beachwood, Ohio, the weekly Shabbat afternoon darshan at Young Israel of Greater Cleveland, and scholar-in-residence at Oheb Zedek Cedar Sinai Synagogue.
+      </p>
+      <p style="text-align:justify;font-size:17px;margin-bottom:var(--space-6)">
+        Rabbi Berger attended Maimonides School in Brookline, Massachusetts, Yeshiva University, and Harvard University, where he received a Ph.D. in Judaic Studies.
+      </p>
+      <p class="text-muted" style="font-size:12px;margin-bottom:var(--space-3)">Rebbeim who shaped his learning</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);max-width:520px">
+        <div>
+          <div class="plate" style="aspect-ratio:4/5">
+            
+          </div>
+          <p class="card-meta" style="margin-top:6px">Rabbi Joseph B. Soloveitchik, “The Rav”</p>
+        </div>
+        <div>
+          <div class="plate" style="aspect-ratio:4/5">
+            
+          </div>
+          <p class="card-meta" style="margin-top:6px">Rav Aharon Lichtenstein</p>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ isArticles }}" hint-placeholder-val="{{ false }}">
+    <section style="max-width:1100px;margin:0 auto;padding:var(--space-8) var(--space-4)">
+      <h6 style="color:var(--color-accent-700)">Library</h6>
+      <h1 style="margin-bottom:var(--space-4)">All Articles</h1>
+      <div class="field" style="max-width:360px;margin-bottom:var(--space-6)">
+        <label for="search">Search by title</label>
+        <input id="search" class="input" type="text" placeholder="e.g. Prophecy, Shabbat, Midrash…" value="{{ query }}" onChange="{{ onQueryChange }}">
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:var(--space-4)">
+        <sc-for list="{{ filteredArticles }}" as="a" hint-placeholder-count="6">
+          <button onClick="{{ a.go }}" class="card elev-sm" style="text-align:left;cursor:pointer">
+            <span class="tag tag-accent" style="align-self:flex-start">{{ a.topicLabel }}</span>
+            <span class="card-title">{{ a.title }}</span>
+            <span class="card-body">{{ a.excerpt }}</span>
+            <span class="card-meta">{{ a.date }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+        <p class="text-muted" style="margin-top:var(--space-4)">No articles match “{{ query }}”.</p>
+      </sc-if>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ isTopic }}" hint-placeholder-val="{{ false }}">
+    <section style="max-width:1100px;margin:0 auto;padding:var(--space-8) var(--space-4)">
+      <h6 style="color:var(--color-accent-700)">Topic</h6>
+      <h1 style="margin-bottom:var(--space-4)">{{ currentTopicLabel }}</h1>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:var(--space-4)">
+        <sc-for list="{{ topicArticles }}" as="a" hint-placeholder-count="4">
+          <button onClick="{{ a.go }}" class="card elev-sm" style="text-align:left;cursor:pointer">
+            <span class="tag tag-accent" style="align-self:flex-start">{{ a.topicLabel }}</span>
+            <span class="card-title">{{ a.title }}</span>
+            <span class="card-body">{{ a.excerpt }}</span>
+            <span class="card-meta">{{ a.date }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ isArticle }}" hint-placeholder-val="{{ false }}">
+    <article style="max-width:720px;margin:0 auto;padding:var(--space-8) var(--space-4)">
+      <button class="btn btn-ghost" onClick="{{ backToList }}" style="padding-left:0;margin-bottom:var(--space-4)">← Back</button>
+      <span class="tag tag-accent">{{ selectedArticle.topicLabel }}</span>
+      <h1 style="margin-top:var(--space-3);margin-bottom:var(--space-2)">{{ selectedArticle.title }}</h1>
+      <p class="text-muted" style="margin-bottom:var(--space-6)">{{ selectedArticle.date }}</p>
+      <p style="text-align:justify;font-size:17px">{{ selectedArticle.body1 }}</p>
+      <p class="heb" style="text-align:right;font-size:19px;margin:var(--space-4) 0">{{ selectedArticle.hebrew }}</p>
+      <p style="text-align:justify;font-size:17px">{{ selectedArticle.body2 }}</p>
+      <sc-if value="{{ selectedArticle.hasPDF }}" hint-placeholder-val="{{ false }}">
+        <a href="#" class="btn btn-secondary" style="margin-top:var(--space-4)">Download PDF</a>
+      </sc-if>
+    </article>
+  </sc-if>
+
+  <sc-if value="{{ isShiurim }}" hint-placeholder-val="{{ false }}">
+    <section style="max-width:900px;margin:0 auto;padding:var(--space-8) var(--space-4)">
+      <h6 style="color:var(--color-accent-700)">Listen</h6>
+      <h1 style="margin-bottom:var(--space-6)">Shiurim</h1>
+      <div style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <sc-for list="{{ allShiurim }}" as="s" hint-placeholder-count="6">
+          <div class="card" style="gap:var(--space-3);padding:var(--space-4)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:var(--space-2)">
+              <div>
+                <span class="tag tag-accent" style="margin-bottom:6px;display:inline-flex">{{ s.topicLabel }}</span>
+                <p class="card-title">{{ s.title }}</p>
+                <p class="card-meta">{{ s.date }}</p>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:var(--space-2);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:8px 12px">
+              <span style="color:var(--color-accent-700)">▶</span>
+              <span class="text-muted" style="font-size:13px">Audio placeholder — drop MP3 in the real template</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ isContact }}" hint-placeholder-val="{{ false }}">
+    <section style="max-width:560px;margin:0 auto;padding:var(--space-8) var(--space-4)">
+      <h6 style="color:var(--color-accent-700)">Contact</h6>
+      <h1 style="margin-bottom:var(--space-4)">Get in Touch</h1>
+      <p class="text-muted" style="margin-bottom:var(--space-6)">Questions, feedback, or requests for a topic to be covered — write in below.</p>
+      <form style="display:flex;flex-direction:column;gap:var(--space-4)">
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" class="input" type="text" placeholder="Your name">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" class="input" type="email" placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" class="input" placeholder="Your message"></textarea>
+        </div>
+        <button type="button" class="btn btn-primary btn-block">Send Message</button>
+      </form>
+    </section>
+  </sc-if>
+
+  </main>
+
+  <footer style="border-top:1px solid var(--color-divider);margin-top:var(--space-8)">
+    <div style="max-width:1100px;margin:0 auto;padding:var(--space-6) var(--space-4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--space-3)">
+      <p class="text-muted" style="font-size:13px;margin:0">© Rabbi Moshe Berger · Torat Tzion Kollel Minyan, Beachwood, Ohio</p>
+      <button class="navlink" onClick="{{ goContact }}">Contact</button>
+    </div>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const TOPICS = [
+  { key: "chumash", label: "Chumash" },
+  { key: "tefillah", label: "Tefillah" },
+  { key: "chagim", label: "Chagim" },
+  { key: "halacha", label: "Halacha" },
+  { key: "hashkafah", label: "Hashkafah/Machshavah" },
+  { key: "gemara", label: "Gemara/Talmud" },
+  { key: "misc", label: "Miscellaneous" }
+];
+
+const ARTICLES = [
+  { id: "a1", title: "Seeing Eden Anew", topicKey: "chumash", date: "June 2026", excerpt: "A close reading of the opening chapters of Bereishit.", body1: "The opening chapters of Bereishit resist a single reading; each generation of commentators has found in them a different question worth asking. This placeholder essay would open with the text itself and build outward.", hebrew: "בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ", body2: "Replace this placeholder body with the full essay text. Hebrew passages like the verse above sit inline, right-aligned, alongside the surrounding English.", hasPDF: true },
+  { id: "a2", title: "The Sabbath of the Land", topicKey: "chumash", date: "April 2026", excerpt: "On Shemitah and the Torah's vision of rest.", body1: "Placeholder body text for an article on Shemitah, the sabbatical year, and what it asks of a person who owns land.", hebrew: "וְשָׁבְתָה הָאָרֶץ שַׁבָּת לַה׳", body2: "Replace with the full article text.", hasPDF: false },
+  { id: "a3", title: "Kavvanah: Intention in Prayer", topicKey: "tefillah", date: "May 2026", excerpt: "What the Rishonim ask of us before we begin to daven.", body1: "Placeholder text exploring the halachic and spiritual requirement of kavvanah before and during the Amidah.", hebrew: "אֵין עוֹמְדִין לְהִתְפַּלֵּל אֶלָּא מִתּוֹךְ כֹּבֶד רֹאשׁ", body2: "Replace with the full article text.", hasPDF: true },
+  { id: "a4", title: "Why We Repeat the Shema", topicKey: "tefillah", date: "February 2026", excerpt: "Structure and repetition in the daily liturgy.", body1: "Placeholder text on the structure of Kriat Shema and its twice-daily repetition.", hebrew: "שְׁמַע יִשְׂרָאֵל ה׳ אֱלֹקֵינוּ ה׳ אֶחָד", body2: "Replace with the full article text.", hasPDF: false },
+  { id: "a5", title: "Counting the Omer, Slowly", topicKey: "chagim", date: "May 2026", excerpt: "A meditation on the days between Pesach and Shavuot.", body1: "Placeholder text on the practice and meaning of Sefirat HaOmer.", hebrew: "וּסְפַרְתֶּם לָכֶם מִמָּחֳרַת הַשַּׁבָּת", body2: "Replace with the full article text.", hasPDF: false },
+  { id: "a6", title: "The Fourth Cup", topicKey: "chagim", date: "March 2026", excerpt: "A note on the structure of the Seder night.", body1: "Placeholder text on the four cups of the Seder and what each represents.", hebrew: "לְפִיכָךְ אֲנַחְנוּ חַיָּבִים לְהוֹדוֹת", body2: "Replace with the full article text.", hasPDF: true },
+  { id: "a7", title: "Muktzeh, Reconsidered", topicKey: "halacha", date: "June 2026", excerpt: "Everyday applications of a subtle Shabbat category.", body1: "Placeholder text working through common muktzeh questions that arise in a modern home.", hebrew: "", body2: "Replace with the full article text.", hasPDF: true },
+  { id: "a8", title: "Guarding the Tongue, Guarding the Heart", topicKey: "halacha", date: "January 2026", excerpt: "Lashon hara and the discipline of speech.", body1: "Placeholder text on the halachot of proper speech.", hebrew: "מָוֶת וְחַיִּים בְּיַד לָשׁוֹן", body2: "Replace with the full article text.", hasPDF: false },
+  { id: "a9", title: "Free Will and Divine Knowledge", topicKey: "hashkafah", date: "April 2026", excerpt: "The Rambam's treatment of an old paradox.", body1: "Placeholder text on the tension between bechirah and yediah in Jewish thought.", hebrew: "הַכֹּל צָפוּי וְהָרְשׁוּת נְתוּנָה", body2: "Replace with the full article text.", hasPDF: true },
+  { id: "a10", title: "What Suffering Asks of Us", topicKey: "hashkafah", date: "December 2025", excerpt: "Theodicy across the Jewish tradition.", body1: "Placeholder text surveying classical and modern responses to the problem of suffering.", hebrew: "", body2: "Replace with the full article text.", hasPDF: false },
+  { id: "a11", title: "A Sugya on Ownership", topicKey: "gemara", date: "May 2026", excerpt: "Working through a classic case in Bava Metzia.", body1: "Placeholder text walking through a sugya on found property and competing claims.", hebrew: "כׇּל דְּאַלִּים גְּבַר", body2: "Replace with the full article text.", hasPDF: true },
+  { id: "a12", title: "The Logic of Machloket", topicKey: "gemara", date: "March 2026", excerpt: "Why the Talmud preserves the losing opinion.", body1: "Placeholder text on how and why the Gemara records dissenting views.", hebrew: "אֵלּוּ וָאֵלּוּ דִּבְרֵי אֱלֹקִים חַיִּים", body2: "Replace with the full article text.", hasPDF: false },
+  { id: "a13", title: "Notes from the Beit Midrash", topicKey: "misc", date: "June 2026", excerpt: "Short reflections that didn't fit elsewhere.", body1: "Placeholder text for shorter miscellaneous reflections and notes.", hebrew: "", body2: "Replace with the full article text.", hasPDF: false },
+  { id: "a14", title: "On Teaching Torah", topicKey: "misc", date: "February 2026", excerpt: "Thoughts after thirty years in the classroom.", body1: "Placeholder text reflecting on decades of teaching Bible and Rabbinic Literature.", hebrew: "", body2: "Replace with the full article text.", hasPDF: true }
+];
+
+const SHIURIM = [
+  { id: "s1", title: "Parashat Hashavua: A Weekly Shiur", topicKey: "chumash", date: "July 2026", src: "" },
+  { id: "s2", title: "Tefillah B'tzibbur: Praying as a Community", topicKey: "tefillah", date: "June 2026", src: "" },
+  { id: "s3", title: "Preparing for the Yamim Noraim", topicKey: "chagim", date: "September 2025", src: "" },
+  { id: "s4", title: "Practical Halacha for the Home", topicKey: "halacha", date: "May 2026", src: "" },
+  { id: "s5", title: "Rambam's Guide, Chapter by Chapter", topicKey: "hashkafah", date: "April 2026", src: "" },
+  { id: "s6", title: "Daf Yomi Companion: Bava Kamma", topicKey: "gemara", date: "March 2026", src: "" }
+];
+
+function topicLabel(key) { const t = TOPICS.find(t => t.key === key); return t ? t.label : key; }
+
+class Component extends DCLogic {
+  state = { page: "home", topic: null, articleId: null, query: "" };
+
+  goHome = () => this.setState({ page: "home" });
+  goArticles = () => this.setState({ page: "articles", query: "" });
+  goTopic = (key) => this.setState({ page: "topic", topic: key });
+  goArticle = (id) => this.setState({ page: "article", articleId: id });
+  goShiurim = () => this.setState({ page: "shiurim" });
+  goContact = () => this.setState({ page: "contact" });
+  backToList = () => this.setState({ page: "articles" });
+  onQueryChange = (e) => this.setState({ query: e.target.value });
+  onHomeSearch = (e) => this.setState({ page: "articles", query: e.target.value });
+
+  renderVals() {
+    const { page, topic, articleId, query } = this.state;
+    const withGo = (a) => ({ ...a, topicLabel: topicLabel(a.topicKey), go: () => this.goArticle(a.id) });
+    const q = query.trim().toLowerCase();
+    const filteredArticles = ARTICLES.filter(a => !q || a.title.toLowerCase().includes(q)).map(withGo);
+
+    return {
+      topics: TOPICS.map(t => ({ label: t.label, active: page === "topic" && topic === t.key, go: () => this.goTopic(t.key) })),
+      isHome: page === "home", isArticles: page === "articles", isTopic: page === "topic",
+      isArticle: page === "article", isShiurim: page === "shiurim", isContact: page === "contact",
+      goHome: this.goHome, goArticles: this.goArticles, goShiurim: this.goShiurim, goContact: this.goContact,
+      backToList: this.backToList, onQueryChange: this.onQueryChange, onHomeSearch: this.onHomeSearch, query,
+      recentArticles: ARTICLES.slice(0, 3).map(withGo),
+      recentShiurim: SHIURIM.slice(0, 3).map(s => ({ ...s, topicLabel: topicLabel(s.topicKey) })),
+      allShiurim: SHIURIM.map(s => ({ ...s, topicLabel: topicLabel(s.topicKey) })),
+      filteredArticles, noResults: filteredArticles.length === 0,
+      currentTopicLabel: topicLabel(topic),
+      topicArticles: ARTICLES.filter(a => a.topicKey === topic).map(withGo),
+      selectedArticle: (() => {
+        const a = ARTICLES.find(a => a.id === articleId);
+        return a ? { ...a, topicLabel: topicLabel(a.topicKey) } : { title: "", date: "", topicLabel: "", body1: "", body2: "", hebrew: "", hasPDF: false };
+      })()
+    };
+  }
+}
+</script>
+</body>
+</html>
